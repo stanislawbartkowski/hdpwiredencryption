@@ -10,7 +10,12 @@ In this article I'm going to alleviate this pain and confusion and provide some 
 The HDP cluster should be installed and healthy.<br>
 The Wired Encryption does not interact with Kerberos, it does not matter if the cluster is Kerberized or not.<br>
 Encryption required certificates. Certificates can be signed by Trusted Authority. It is recommended but not always available. Another method is to use self-signed certificates which causes data to be encrypted and does not guarantee a full confidentiality.<br>
+The encryption is enabled for the following services: HDFS, MapReduce/TEZ and Yarn.
 In this article I'm going to apply self-signed certificates.
-# General overview
+# Steps
+ * Create self-signed certificates
+ * Distribute and install certificates in SSL KeyStore
+ * Configure services for encryption
+ 
 
 
