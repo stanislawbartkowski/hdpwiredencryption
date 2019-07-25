@@ -23,6 +23,7 @@ runcommand() {
     [ -z "$host" ] && continue
     echo "copy scripts to remote $host"
     ssh -n $host mkdir -p $EXCATALOG
+    copyremote $host custom.rc
     copyremote $host source.rc
     copyremote $host $script
     ssh -n $host "cd $EXCATALOG; ./$script"
