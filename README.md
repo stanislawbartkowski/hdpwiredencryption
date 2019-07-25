@@ -135,4 +135,5 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 | yarn.http.policy | Modify | HTTPS_ONLY
 | yarn.log.server.url | Modify | Change to HTTPS URL : https://\<host\>:19889/jobhistory/logs
 | yarn.resourcemanager.webapp.https.address | Accept default | \<host name\>:8090
+| yarn.nodemanager.webapp.https.address | Accept default |  0.0.0.0:8042
 | yarn.log.server.web-service.url | Modify | Change to HTTPS URL : https://\<host name\>:8190/ws/v1/applicationhistory
