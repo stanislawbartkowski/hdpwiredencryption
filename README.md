@@ -16,6 +16,7 @@ There should passwordless root ssh connection between the hosts where the tools 
 # Steps
  * Create self-signed certificates
  * Distribute and install certificates in SSL KeyStore
+ * Create and distribute a client truststore containing public certificates for all hosts
  * Configure services for encryption
  # Certificates
  ## Tools description
@@ -30,7 +31,7 @@ hosts.txt | List of hostnames of the cluster. The tool is using this list to dis
 run.sh | The launcher script
 source.rc | Settings of common environment variables. The setting can be customized in custom.rc
 <br>
-The variable description in source.rc. The defaults for key and truststore locations reflects defaults in Ambari configuration panel. <br>
+The variable description in source.rc. The defaults for key and truststore locations reflect defaults in Ambari configuration panel. <br>
 
 Variable | Description | Default | Customize
 -------- | ----------- | ----------- | -----------
@@ -56,14 +57,30 @@ Copy files from *templates* directory and modify.
 > ./run.sh 0 <br>
 <br>
 The tool generates self-signed certificate for every hosts and creates server keystore and truststore.Impartant: the tool wipes out all previous content of /etc/security/clientKeys and serverKeys without warning.<br>
-After that, on all hosts the following directory structure should be created
+After that, on all hosts the following directory structure should be created.<br>
+
 * /etc/security/clientKeys : empty directory
 * /etc/security/serverKeys
   * keystore.jks
-  * <hostname>.cert
+  * \<hostname\>.cert
   * truststore.jks
  
  Verify<br>
  > keytool -list -v  -keystore /etc/security/serverKeys/keystore.jks<br>
  <br>
  Make sure that organization name reflects the customized name found in custom.rc and CN is equals to the full hostname.
+## Create and distribute client trustore
+
+>./run.sh 1<br>
+
+The tool creates a client trustore containing the public certificates from all hosts. The trustore is then shipped to all hosts and saved in */etc/security/clientKeys/allkeys.jks* file.<br>
+Verify the content of the trustore<br>
+> keytool -list -v  -keystore /etc/security/clientKeys/allkeys.jks
+
+The number of entries should be equal to the number of hosts found in *hosts.txt* file
+## Finalize
+
+> ./run.sh 2 <br>
+
+ In this step, the tool applies proper ownerships and permissions for keystored and truststores. All files in /etc/security/serverKeys should be visible only for users belonging to *hadoop* group and closed for all other users. File */etc/security/clientKeys/allkeys.jks* should be visible by all.
+ 
