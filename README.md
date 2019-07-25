@@ -46,7 +46,7 @@ KEYS | Temporary directory | keys | No
 SERVER_KEYPASS_PASSWORD | Server key password | test1234 | Yes
 SERVER_STOREPASS_PASSWORD| Server keystore password | $SERVER_KEYPASS_PASSWORD | Yes
 SERVER_TRUSTSTORE_PASSWORD | Server truststore password | $SERVER_KEYPASS_PASSWORD | Yes
-ORGDATA | DN certificate name | "OU=hw,O=hw,L=paloalto,ST=ca,C=us" | Yes
+ORGDATA | Organization name | "OU=hw,O=hw,L=paloalto,ST=ca,C=us" | Yes
 ## Installation and customization
 Copy files from *templates* directory and modify.
 * hosts.txt : contains the list of all hostnames in the cluster. A passwordless ssh root connection should be configured.
@@ -55,9 +55,15 @@ Copy files from *templates* directory and modify.
 
 > ./run.sh 0 <br>
 <br>
-The tool generates self-signed certificate for every hosts and creates server keystore and truststore.
-
-
-
-
-
+The tool generates self-signed certificate for every hosts and creates server keystore and truststore.Impartant: the tool wipes out all previous content of /etc/security/clientKeys and serverKeys without warning.<br>
+After that, on all hosts the following directory structure should be created
+* /etc/security/clientKeys : empty directory
+* /etc/security/serverKeys
+  * keystore.jks
+  * <hostname>.cert
+  * truststore.jks
+ 
+ Verify<br>
+ > keytool -list -v  -keystore /etc/security/serverKeys/keystore.jks<br>
+ <br>
+ Make sure that organization name reflects the customized name found in custom.rc and CN is equals to the full hostname.
