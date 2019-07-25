@@ -10,7 +10,7 @@ In this article I'm going to alleviate this pain and confusion and provide some 
 The HDP cluster should be installed and healthy.<br>
 The Wired Encryption does not interact with Kerberos, it does not matter if the cluster is Kerberized or not.<br>
 Encryption required certificates. Certificates can be signed by Trusted Authority. It is recommended but not always available. Another method is to use self-signed certificates which causes data to be encrypted and does not guarantee a full confidentiality.<br>
-The encryption is enabled for the following services: HDFS, MapReduce/TEZ and Yarn.<br>
+The encryption is enabled for the following services: WebHDFS, MapReduce/TEZ and Yarn.<br>
 In this article I'm going to apply self-signed certificates.<br>
 There should passwordless root ssh connection between the hosts where the tools is installed and all other hosts in the cluster.
 # Steps
@@ -47,11 +47,12 @@ KEYS | Temporary directory | keys | No
 SERVER_KEYPASS_PASSWORD | Server key password | test1234 | Yes
 SERVER_STOREPASS_PASSWORD| Server keystore password | $SERVER_KEYPASS_PASSWORD | Yes
 SERVER_TRUSTSTORE_PASSWORD | Server truststore password | $SERVER_KEYPASS_PASSWORD | Yes
+CLIENT_ALLKEYS_PASSWORD | Password for client keystore | $SERVER_KEYPASS_PASSWORD | Yes
 ORGDATA | Organization name | "OU=hw,O=hw,L=paloalto,ST=ca,C=us" | Yes
 ## Installation and customization
 Copy files from *templates* directory and modify.
 * hosts.txt : contains the list of all hostnames in the cluster. A passwordless ssh root connection should be configured.
-* custom.rc : modify the value of the following variables: SERVER_KEYPASS_PASSWORD, SERVER_STOREPASS_PASSWORD, SERVER_TRUSTSTORE_PASSWORD and ORGDATA
+* custom.rc : modify the value of the following variables: SERVER_KEYPASS_PASSWORD, SERVER_STOREPASS_PASSWORD, SERVER_TRUSTSTORE_PASSWORD,CLIENT_ALLKEYS_PASSWORD and ORGDATA
 ## Create and distribute server certrificate
 
 > ./run.sh 0 <br>
@@ -82,5 +83,51 @@ The number of entries should be equal to the number of hosts found in *hosts.txt
 
 > ./run.sh 2 <br>
 
- In this step, the tool applies proper ownerships and permissions for keystored and truststores. All files in /etc/security/serverKeys should be visible only for users belonging to *hadoop* group and closed for all other users. File */etc/security/clientKeys/allkeys.jks* should be visible by all.
+ In this step, the tool applies proper ownerships and permissions for keystores and truststores. All files in /etc/security/serverKeys should be visible only for users belonging to *hadoop* group and closed for all other users. File */etc/security/clientKeys/allkeys.jks* should be visible by all.
  
+# Configure services for Wired Encryption
+
+The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, TEZ and Yarn. After applying the settings, the cluster should be restarted and put the changed into force.
+
+### HDFS, server-ssl.xml
+
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| ssl.server.truststore.location | Accept default | /etc/security/serverKeys/truststore.jks
+| ssl.server.truststore.password | Modify | $SERVER_TRUSTSTORE_PASSWORD
+| ssl.server.truststore.type | Accept default | jks
+| sl.server.keystore.location | Accept default | /etc/security/serverKeys/keystore.jks
+| ssl.server.keystore.password | Modify | $SERVER_KEYPASS_PASSWORD
+| ssl.server.keystore.type | Accept default | jks
+| ssl.server.keystore.keypassword |Modify | $SERVER_KEYPASS_PASSWORD 
+
+### HDFS, client-ssl.xml 
+
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| ssl.client.truststore.location | Accept default | /etc/security/clientKeys/all.jks
+| ssl.client.truststore.password | Modify | CLIENT_ALLKEYS_PASSWORD
+| ssl.client.truststore.type | Accept default | jks
+
+### HDFS, custom core-site.xml
+
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| hadoop.rpc.protection | Modify | privacy (remove authentication)
+
+### HDFS, custom-hdfs.xml
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| dfs.encrypt.data.transfer | Add new | true
+| dfs.encrypt.data.transfer.algorithm | Add new | 3des
+
+### HDFS, hdfs-site.xml
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| dfs.http.policy | Modify | HTTPS_ONLY
+| dfs.datanode.https.address | Accept default | 0.0.0.0:50475
+| dfs.namenode.https-address | Accept default | \<hostname>\:50470
+| dfs.namenode.secondary.https-address | Accept default | The parameter is absent if HDFS HA is set up
+
+### Yarn, yarn-site.xml
+
