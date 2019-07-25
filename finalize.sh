@@ -1,4 +1,5 @@
 source source.rc
+source custom.rc
 
 chown -R $YARN_USER:hadoop $SERVER_KEY_LOCATION
 chown -R $YARN_USER:hadoop $CLIENT_KEY_LOCATION

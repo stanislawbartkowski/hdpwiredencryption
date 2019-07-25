@@ -1,4 +1,5 @@
 source source.rc
+source custom.rc
 
 TEMPALLKEYS=$KEYS/allkeys.jks
 

@@ -1,4 +1,5 @@
 source source.rc
+source custom.rc
 
 rm -rf $CLIENT_KEY_LOCATION $SERVER_KEY_LOCATION
 mkdir -p $SERVER_KEY_LOCATION $CLIENT_KEY_LOCATION

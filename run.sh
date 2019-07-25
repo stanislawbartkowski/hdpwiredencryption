@@ -1,4 +1,5 @@
 source source.rc
+source custom.rc
 
 printhelp() {
   echo "run.sh /phase/"
