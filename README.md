@@ -137,3 +137,21 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 | yarn.resourcemanager.webapp.https.address | Accept default | \<host name\>:8090
 | yarn.nodemanager.webapp.https.address | Accept default |  0.0.0.0:8042
 | yarn.log.server.web-service.url | Modify | Change to HTTPS URL : https://\<host name\>:8190/ws/v1/applicationhistory
+
+### MapReduce2, mapred-site.xml
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| mapreduce.jobhistory.http.policy | Modify | HTTPS_ONLY
+
+### MapReduce2, custom mapred-site.xml
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| mapreduce.jobhistory.webapp.https.address | Add | <JHS>:<JHS_HTTPS_PORT> 
+| mapreduce.ssl.enabled | Add | true
+| mapreduce.shuffle.ssl.enabled | Add | true
+ 
+### TEZ, customer tez-site.xml 
+| Parameter | Add/modify | Value
+| ---- | ---- | ----
+| tez.runtime.shuffle.ssl.enable | Add | true
+| tez.runtime.shuffle.keep-alive.enabled | Add | true
