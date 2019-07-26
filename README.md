@@ -146,7 +146,7 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 ### MapReduce2, custom mapred-site.xml
 | Parameter | Add/modify | Value
 | ---- | ---- | ----
-| mapreduce.jobhistory.webapp.https.address | Add | <JHS>:<JHS_HTTPS_PORT> 
+| mapreduce.jobhistory.webapp.https.address | Add | \<JHS\>:\<JHS_HTTPS_PORT\> (Yarn history server and secure port)
 | mapreduce.ssl.enabled | Add | true
 | mapreduce.shuffle.ssl.enabled | Add | true
  
