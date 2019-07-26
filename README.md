@@ -1,17 +1,17 @@
 # HDP Wired Encryption
 https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.1.0/configuring-wire-encryption/content/wire_encryption.html
 
-Wired Encryption masks all data which moves into the cluster, inside and out of the HDP cluster. In addition to authorization and authentication, it is another layer of security. Traffic is encrypted not only while dealing with external world but also internally. Unfortunately, it comes with price, usually there is a performance penalty around 10-15% because all data in traffic is to be encrypted and decrypted.<br>
-Wired Encryption is adding not only next layer of security but also another layer of complexity. Unlike Kerberos, it is not automated and manual changes are necessary. If could be a painstaking process for the first time. The HDP documentation provides all necessary information but it is very general and the HDP administrator can be confused trying to extract a practical steps to implement encryption.
+Wired Encryption masks all data which moves into the cluster, inside and out of the HDP cluster. In addition to authorization and authentication, it is another layer of security. Traffic is encrypted not only while dealing with the external world but also internally. Unfortunately, it comes with a price, usually, there is a performance penalty around 10-15% because all data in traffic is to be encrypted and decrypted.<br>
+Wired Encryption is adding not only the next layer of security but also another layer of complexity. Unlike Kerberos, it is not automated and manual changes are necessary. If could be a painstaking process for the first time. The HDP documentation provides all necessary information but it is very general and the HDP administrator can be confused trying to extract  practical steps to implement encryption.
 <br>
-In this article I'm going to alleviate this pain and confusion and provide some practical steps and tools how to deal with that.<br>
+In this article, I'm going to alleviate this pain and confusion and provide some practical steps and tools how to deal with that.<br>
 <br>
 # Prerequisities
 The HDP cluster should be installed and healthy.<br>
 The Wired Encryption does not interact with Kerberos, it does not matter if the cluster is Kerberized or not.<br>
 Encryption required certificates. Certificates can be signed by Trusted Authority. It is recommended but not always available. Another method is to use self-signed certificates which causes data to be encrypted and does not guarantee a full confidentiality.<br>
 The encryption is enabled for the following services: WebHDFS, MapReduce/TEZ and Yarn.<br>
-In this article I'm going to apply self-signed certificates.<br>
+In this article, I'm going to apply self-signed certificates.<br>
 There should passwordless root ssh connection between the hosts where the tools is installed and all other hosts in the cluster.
 # Steps
  * Create self-signed certificates
@@ -20,7 +20,7 @@ There should passwordless root ssh connection between the hosts where the tools 
  * Configure services for encryption
  # Certificates
  ## Tools description
- The tool comprised several simple and self explaining bash scripts. The scripts generate and distribute across the cluster self-signed certificates.<br>
+ The tool comprised several simple and self-explaining bash scripts. The scripts generate and distribute across the cluster self-signed certificates.<br>
  
  Script | Description
 ------------ | -------------
@@ -57,8 +57,8 @@ Copy files from *templates* directory and modify.
 
 > ./run.sh 0 <br>
 <br>
-The tool generates self-signed certificate for every hosts and creates server keystore and truststore.Impartant: the tool wipes out all previous content of /etc/security/clientKeys and serverKeys without warning.<br>
-After that, on all hosts the following directory structure should be created.<br>
+The tool generates a self-signed certificate for every host and creates server keystore and truststore. Important: the tool wipes out all previous content of /etc/security/clientKeys and serverKeys without warning.<br>
+After that, on all hosts, the following directory structure should be created.<br>
 
 * /etc/security/clientKeys : empty directory
 * /etc/security/serverKeys
