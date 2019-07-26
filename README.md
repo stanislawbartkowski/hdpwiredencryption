@@ -156,5 +156,28 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 | tez.runtime.shuffle.ssl.enable | Add | true
 | tez.runtime.shuffle.keep-alive.enabled | Add | true
 
+# Ambari metrics
+After setting a wired encryption, Ambari metrics are inactive. To enable them, the certificate of the host where HDFS NameNode is installed should be imported into Ambari truststore.<br>
+The certificate can be downloaded from /etc/security/serverKey/\<hostname\>.cert or copied and pasted from output of:br>
+> openssl s_client -connect  https://\<namenode host\>:50470<br>
+The next step is to import the certificate into Ambari truststore<br>
+
+>ambari-server setup-security
+```bash
+Using python  /usr/bin/python
+Security setup options...
+===========================================================================
+Choose one of the following options: 
+  [1] Enable HTTPS for Ambari server.
+  [2] Encrypt passwords stored in ambari.properties file.
+  [3] Setup Ambari kerberos JAAS configuration.
+  [4] Setup truststore.
+  [5] Import certificate to truststore.
+===========================================================================
+Enter choice, (1-5): 5
+```
+Use 4) is the truststore is not created yet or directly 5) otherwise.<br>
+After fixing the trustore, restart Ambari server.
 # Verification
-Run a health-check for all services. 
+Run a health-check for all services. <br>
+Launch HDFS, Yarn, and MapReduce2 UIs. Pay attentios that secure HTTP is enabled.
