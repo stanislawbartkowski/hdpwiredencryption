@@ -179,5 +179,42 @@ Enter choice, (1-5): 5
 Use 4) is the truststore is not created yet or directly 5) otherwise.<br>
 After fixing the trustore, restart Ambari server.
 # Verification
+### General
 Run a health-check for all services. <br>
-Launch HDFS, Yarn, and MapReduce2 UIs. Pay attentios that secure HTTP is enabled.
+Launch HDFS, Yarn, and MapReduce2 UIs. Pay attention that browser is using secure, https, connection.
+### WebHDFS
+Review again HDFS parameters (here NameNode hostname is *mdp1.sb.com*)
+* dfs.namenode.http-address *mdp1.sb.com:50070*
+* dfs.namenode.https-address *mdp1.sb.com:50470*
+
+The expected result is that non-secure connection on port 50070 is closed and WebHDFS is enabled for secure 50470 port.
+<br>
+> nc -zv mdp1.sb.com 50070<br>
+```
+Ncat: Version 7.50 ( https://nmap.org/ncat )
+Ncat: Connection refused
+```
+> nc -zv mdp1.sb.com 50470<br>
+```
+Ncat: Connected to 192.168.122.129:50470.
+Ncat: 0 bytes sent, 0 bytes received in 0.01 seconds.
+```
+Test WebHDFS on secure connection.<br>
+Kerberos authentication enabled.<br>
+
+> curl -i -k --negotiate -u : -X GET https://mdp1.sb.com:50470/webhdfs/v1/?op=LISTSTATUS<br>
+
+Kerberos authentication disabled.<br>
+
+> curl -i -k -X GET https://mdp1.sb.com:50470/webhdfs/v1/?op=LISTSTATUS
+```
+HTTP/1.1 401 Authentication required
+..........
+.........
+{"FileStatuses":{"FileStatus":[
+{"accessTime":0,"blockSize":0,"childrenNum":3,"fileId":16392,"group":"hadoop","length":0,"modificationTime":1553698288837,"owner":"yarn","pathSuffix":"app-logs","permission":"1777","replication":0,"storagePolicy":0,"type":"DIRECTORY"},
+....................
+er":"hdfs","pathSuffix":"warehouse","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"}
+]}}
+```
+
