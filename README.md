@@ -19,6 +19,8 @@ There should passwordless root ssh connection between the hosts where the tools 
  * Create and distribute a client truststore containing public certificates for all hosts
  * Configure services for encryption
  # Certificates
+ ## Security concern
+ The tool ships the scripts to the cluster nodes and executes them. It is very important to remove the scripts when the task is accomplished. Scripts *source.rc* and *custom.rc* contains the key and truststore password in plain text and it makes the potential security risk. The scripts are transported to *root/re* directory on all hosts.
  ## Tools description
  The tool comprised several simple and self-explaining bash scripts. The scripts generate and distribute across the cluster self-signed certificates.<br>
  
