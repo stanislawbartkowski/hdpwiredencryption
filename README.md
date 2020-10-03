@@ -48,10 +48,8 @@ CERTIFICATE_NAME | Server certificate file | $SERVER_KEY_LOCATION/$HOST_NAME.cer
 ALL_JKS | Client keys | $CLIENT_KEY_LOCATION/allkeys.jks | No
 YARN_USER | Yarn user | yarn | No
 KEYS | Temporary directory | keys | No
-SERVER_KEYPASS_PASSWORD | Server key password | test1234 | Yes
 SERVER_STOREPASS_PASSWORD| Server keystore password | $SERVER_KEYPASS_PASSWORD | Yes
 SERVER_TRUSTSTORE_PASSWORD | Server truststore password | $SERVER_KEYPASS_PASSWORD | Yes
-CLIENT_ALLKEYS_PASSWORD | Password for client keystore | $SERVER_KEYPASS_PASSWORD | Yes
 ORGDATA | Organization name | "OU=hw,O=hw,L=paloalto,ST=ca,C=us" | Yes
 ## Installation and customization
 Copy files from *templates* directory and modify.
