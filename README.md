@@ -54,6 +54,7 @@ ORGDATA | Organization name | "OU=hw,O=hw,L=paloalto,ST=ca,C=us" | Yes
 ## Installation and customization
 Copy files from *templates* directory and modify.
 * hosts.txt : contains the list of all hostnames in the cluster. A passwordless ssh root connection should be configured.
+* source.rc : contains some common names and location. Variables in source.rc can be overwritten in custom.rc
 * custom.rc : modify the value of the following variables: SERVER_KEYPASS_PASSWORD, SERVER_STOREPASS_PASSWORD, SERVER_TRUSTSTORE_PASSWORD,CLIENT_ALLKEYS_PASSWORD and ORGDATA
 ## Create and distribute server certrificate
 
