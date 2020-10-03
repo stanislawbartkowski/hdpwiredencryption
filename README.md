@@ -72,6 +72,7 @@ After that, on all hosts, the following directory structure should be created.<b
  > keytool -list -v  -keystore /etc/security/serverKeys/keystore.jks<br>
  <br>
  Make sure that organization name reflects the customized name found in custom.rc and CN is equals to the full hostname.
+ 
 ## Create and distribute client trustore
 
 >./run.sh 1<br>
