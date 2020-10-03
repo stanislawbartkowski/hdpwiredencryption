@@ -161,9 +161,11 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 | tez.runtime.shuffle.keep-alive.enabled | Add | true
 
 # Ambari metrics
-After setting a wired encryption, Ambari metrics are inactive. To enable them, the certificate of the host where HDFS NameNode is installed should be imported into Ambari truststore.<br>
-The certificate can be downloaded from /etc/security/serverKey/\<hostname\>.cert or copied and pasted from output of:br>
+After setting a wired encryption, Ambari Metrcis component is up and running but metrics are dead. To enable them, the certificate of the host where HDFS NameNode is installed should be imported into Ambari truststore.<br>
+The certificate can be downloaded from /etc/security/serverKey/\<hostname\>.cert or copied and pasted from output.<br>
+
 > openssl s_client -connect  https://\<namenode host\>:50470<br>
+
 The next step is to import the certificate into Ambari truststore<br>
 
 >ambari-server setup-security
