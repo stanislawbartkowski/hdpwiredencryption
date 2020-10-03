@@ -29,6 +29,7 @@ There should passwordless root ssh connection between the hosts where the tools 
 ------------ | -------------
 allkeys.sh | Collects and prepares and distributes the keystore connecting all keys
 custom.rc | Custom rc allowing overwriting defaults in source.rc
+genkey.sh | Creates self-signed certificate, keystore and truststore
 finalize.sh | Completes the procedure, applies all necessary ownerships and permissions to keystores and keys
 hosts.txt | List of hostnames of the cluster. The tool is using this list to distribute the certificates
 run.sh | The launcher script
