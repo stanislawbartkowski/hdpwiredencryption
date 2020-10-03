@@ -97,7 +97,7 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 
 | Parameter | Add/modify | Value
 | ---- | ---- | ----
-| ssl.server.truststore.location | Accept default | /etc/security/serverKeys/truststore.jks
+| ssl.server.truststore.location | Modify | /etc/security/serverKeys/truststore.jks
 | ssl.server.truststore.password | Modify | $SERVER_TRUSTSTORE_PASSWORD
 | ssl.server.truststore.type | Accept default | jks
 | sl.server.keystore.location | Accept default | /etc/security/serverKeys/keystore.jks
@@ -117,7 +117,7 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 
 | Parameter | Add/modify | Value
 | ---- | ---- | ----
-| hadoop.rpc.protection | Modify | privacy (remove authentication)
+| hadoop.rpc.protection | Add | privacy (remove authentication)
 
 ### HDFS, custom-hdfs.xml
 | Parameter | Add/modify | Value
