@@ -1,3 +1,15 @@
+
+log() {
+  echo "$1"
+}
+
+logfail() {
+  log "$1"
+  log "FATAL - cannot continue"
+  exit 4
+}
+
+
 SERVER_KEY_LOCATION=/etc/security/serverKeys
 CLIENT_KEY_LOCATION=/etc/security/clientKeys
 HOST_NAME=$HOSTNAME
@@ -11,9 +23,3 @@ YARN_USER=yarn
 
 KEYS=keys
 
-# modify
-SERVER_KEYPASS_PASSWORD=test1234
-SERVER_STOREPASS_PASSWORD=$SERVER_KEYPASS_PASSWORD
-SERVER_TRUSTSTORE_PASSWORD=$SERVER_KEYPASS_PASSWORD
-
-ORGDATA="OU=hw,O=hw,L=paloalto,ST=ca,C=us"

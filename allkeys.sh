@@ -9,15 +9,24 @@ gethost() {
   echo $host
 }
 
+
 rm -f $TEMPALLKEYS
+
+log "Import certficates into $TEMPALLKEYS"
 
 for file in $(ls $KEYS/*cert); do
   host=`gethost $file`
   keytool -import -noprompt -alias $host -file $file -keystore $TEMPALLKEYS -storepass $SERVER_TRUSTSTORE_PASSWORD
+  [ $? -ne 0 ] && logfail "Failed while importing"
+
   echo $host
 done
 
+log "Distribute $TEMPALLKEY across the cluster"
+
 for file in $(ls $KEYS/*cert); do
   host=`gethost $file`
+  log "Copy to $host"
   scp $TEMPALLKEYS $host:/$ALL_JKS
+  [ $? -ne 0 ] && logfail "Failed while copying"
 done
