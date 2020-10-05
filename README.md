@@ -182,8 +182,9 @@ Choose one of the following options:
 ===========================================================================
 Enter choice, (1-5): 5
 ```
-Use 4) is the truststore is not created yet or directly 5) otherwise.<br>
-After fixing the trustore, restart Ambari server.
+Use 4) if the truststore is not created yet or directly 5) otherwise.<br>
+After fixing the truststore, restart Ambari server.
+
 # Verification
 ### General
 Run a health-check for all services. <br>
