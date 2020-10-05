@@ -9,6 +9,9 @@ printhelp() {
   echo " 0 - generate keys"
   echo " 1 - generate allkeys"
   echo " 2 - finalize"
+
+  echo " 3 - generate CSR"
+  echo " 4 - distribute certificates"
 }
 
 
@@ -31,7 +34,7 @@ runcommand() {
     copyremote $host custom.rc
     copyremote $host source.rc
     copyremote $host $script
-    ssh -n $host "cd $EXCATALOG; ./$script"
+    ssh -n $host "cd $EXCATALOG; ./$script $2"
     echo $PWD
   done <hosts.txt
 }
@@ -42,17 +45,37 @@ collectallkeys() {
   log "Collects certificate from all hosts"
   while read -r host; do
     scp $host:$SERVER_KEY_LOCATION/$host.cert $KEYS
-    [ $? -ne 0 ] && logfail "Cannot copy back certficate from remote location"
+    [ $? -ne 0 ] && logfail "Cannot copy back certficate from remote location $host"
+  done <hosts.txt
+}
+
+collectallcsr() {
+  rm -rf $CSRDIR
+  mkdir -p $CSRDIR
+  log "Collect all CSR requests into $CRSDIR"
+  while read -r host; do
+    scp $host:$SERVER_KEY_LOCATION/$host.csr $CSRDIR
+    [ $? -ne 0 ] && logfail "Cannot copy back CSR from host $host"
+  done <hosts.txt
+}
+
+distributecerts() {
+  while read -r host; do
+    CNAME=$host$CACERT_APP
+    scp $CERTDIR/$CNAME $host:$SERVER_KEY_LOCATION/$CNAME
+    [ $? -ne 0 ] && logfail "Cannot copy certificate to $host $SERVER_KEY_LOCATION/$CNAME"
   done <hosts.txt
 }
 
 PAR=$1
 EXCATALOG=re
 KEYSDIR=keys
+CSRDIR=csrs
+CERTDIR=certs
 
 case $PAR in
    0) echo "$PAR - generate keys on all hosts"
-      runcommand genkeys.sh
+      runcommand genkeys.sh 0
      ;;
    1) echo "$PAR - generate allkeys store"
      collectallkeys
@@ -61,6 +84,15 @@ case $PAR in
    2) echo "$PAR - finalize"
      runcommand finalize.sh
      ;;
+   3) echo "$PAR generate self-signed and CSR"
+      runcommand genkeys.sh 1
+      collectallcsr
+      ;;
+   4) echo "$PAR distrubute and import generated certificates"
+      distributecerts
+      runcommand importcacert.sh
+      runcommand genkeys.sh 2
+      ;;      
    *) echo "Incorrect parameter"
       printhelp
       ;;

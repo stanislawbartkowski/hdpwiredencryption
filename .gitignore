@@ -1,3 +1,5 @@
 /custom.rc
 /hosts.txt
-keys
+/keys
+/csrs
+/certs
