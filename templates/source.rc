@@ -1,12 +1,28 @@
+
+log() {
+  echo "$1"
+}
+
+logfail() {
+  log "$1"
+  log "FATAL - cannot continue"
+  exit 4
+}
+
+
 SERVER_KEY_LOCATION=/etc/security/serverKeys
 CLIENT_KEY_LOCATION=/etc/security/clientKeys
 HOST_NAME=$HOSTNAME
+ALIAS_NAME=cert
 
 KEYSTORE_FILE=$SERVER_KEY_LOCATION/keystore.jks
 TRUSTSTORE_FILE=$SERVER_KEY_LOCATION/truststore.jks
 CERTIFICATE_NAME=$SERVER_KEY_LOCATION/$HOST_NAME.cert
+CSR_NAME=$SERVER_KEY_LOCATION/$HOST_NAME.csr
 ALL_JKS=$CLIENT_KEY_LOCATION/allkeys.jks
+CACERT_APP=.cert.pem
 
 YARN_USER=yarn
 
 KEYS=keys
+
