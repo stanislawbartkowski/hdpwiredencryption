@@ -148,6 +148,8 @@ truststore.jks
  
 ## Create and distribute client trustore
 
+This step is common for self-signed certificates and CA-signed.
+
 >./run.sh 1<br>
 
 The tool creates a client trustore containing the public certificates from all hosts. The trustore is then shipped to all hosts and saved in */etc/security/clientKeys/allkeys.jks* file.<br>
@@ -156,6 +158,8 @@ Verify the content of the trustore<br>
 
 The number of entries should be equal to the number of hosts found in *hosts.txt* file
 ## Finalize
+
+This step is common for self-signed certificates and CA-signed.
 
 > ./run.sh 2 <br>
 
