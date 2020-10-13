@@ -8,22 +8,18 @@ Wired Encryption is adding not only the next layer of security but also another 
 In this article, I'm going to alleviate this pain and confusion and provide some practical steps and tools how to deal with that.<br>
 <br>
 # Prerequisities
-The HDP cluster should be installed and healthy.<br>
+The HDP cluster should be installed and healthy. Java and *keytool* is required.<br>
+
 The Wired Encryption does not interact with Kerberos, it does not matter if the cluster is Kerberized or not.<br>
-Encryption required certificates. Certificates can be signed by Trusted Authority. It is recommended but not always available. Another method is to use self-signed certificates which causes data to be encrypted and does not guarantee a full confidentiality.<br>
-The encryption is enabled for the following services: WebHDFS, MapReduce/TEZ and Yarn.<br>
-In this article, I'm going to apply self-signed certificates.<br>
-There should passwordless root ssh connection between the hosts where the tools is installed and all other hosts in the cluster.
-# Steps
- * Create self-signed certificates
- * Distribute and install certificates in SSL KeyStore
- * Create and distribute a client truststore containing public certificates for all hosts
- * Configure services for encryption
- # Certificates
- ## Security concern
- The tool ships the scripts to the cluster nodes and executes them. It is very important to remove the scripts when the task is accomplished. Scripts *source.rc* and *custom.rc* contains the key and truststore password in plain text and it makes the potential security risk. The scripts are transported to *root/re* directory on all hosts.
- ## Tools description
- The tool comprised several simple and self-explaining bash scripts. The scripts generate and distribute across the cluster self-signed certificates.<br>
+Encryption required certificates which can be signed by Certificate Authority or self-signed. CA-signed certficates are recommended, self-signed certificates make data be encrypted but do not guarantee a full confidentiality.<br>
+The encryption method desribed in this article is enabled for the following services: WebHDFS, MapReduce/TEZ and Yarn.<br>
+There should passwordless root ssh connection between the host where the tool is installed and all other hosts in the cluster.
+
+# Security concern
+The tool ships the scripts to the cluster nodes and executes them. The scripts when the task is completed. Scripts *source.rc* and *custom.rc* contains the key and truststore passwords in plain text and it makes the potential security risk. The scripts are transported to *root/re* directory on all hosts.
+
+# Tools description
+The tool comprised several simple and self-explaining bash scripts. The scripts generate and distribute across the cluster self-signed certificates.<br>
  
  Script | Description
 ------------ | -------------
@@ -51,11 +47,20 @@ KEYS | Temporary directory | keys | No
 SERVER_STOREPASS_PASSWORD| Server keystore password | $SERVER_KEYPASS_PASSWORD | Yes
 SERVER_TRUSTSTORE_PASSWORD | Server truststore password | $SERVER_KEYPASS_PASSWORD | Yes
 ORGDATA | Organization name | "OU=hw,O=hw,L=paloalto,ST=ca,C=us" | Yes
-## Installation and customization
+
+# Installation and customization
 Copy files from *templates* directory and modify.
 * hosts.txt : contains the list of all hostnames in the cluster. A passwordless ssh root connection should be configured.
 * source.rc : contains some common names and location. Variables in source.rc can be overwritten in custom.rc
 * custom.rc : modify the value of the following variables: SERVER_KEYPASS_PASSWORD, SERVER_STOREPASS_PASSWORD, SERVER_TRUSTSTORE_PASSWORD,CLIENT_ALLKEYS_PASSWORD and ORGDATA
+
+# Self-signed certificate 
+## Steps
+ * Create self-signed certificates
+ * Distribute and install certificates in SSL KeyStore
+ * Create and distribute a client truststore containing public certificates for all hosts
+ * Configure services for encryption
+
 ## Create and distribute server certrificate
 
 > ./run.sh 0 <br>
@@ -88,6 +93,36 @@ The number of entries should be equal to the number of hosts found in *hosts.txt
 > ./run.sh 2 <br>
 
  In this step, the tool applies proper ownerships and permissions for keystores and truststores. All files in /etc/security/serverKeys should be visible only for users belonging to *hadoop* group and closed for all other users. File */etc/security/clientKeys/allkeys.jks* should be visible by all.
+ 
+# CA-signed certificates
+ 
+## Steps
+ * Create self-signed certificates
+ * Creates and collects all CSR (Certficate Signing Requests)
+ * Manual step: send CSRs to Certtificate Authority to have them signed
+ * Distribute and install certificates in SSL KeyStore
+ * Create and distribute a client truststore containing public certificates for all hosts
+ * Configure services for encryption
+
+## Create self-signed certificates and CSRs
+
+> ./run 3 <br>
+
+Self-signed certificates are created on every node, for every node a CSR is generated and all CSRs are collected in *csrs* directory.
+
+```
+ll csrs/
+razem 16
+-rw-r--r-- 1 root root 743 10-13 09:43 bushily1.fyre.ibm.com.csr
+-rw-r--r-- 1 root root 743 10-13 09:43 bushily2.fyre.ibm.com.csr
+-rw-r--r-- 1 root root 743 10-13 09:43 bushily3.fyre.ibm.com.csr
+-rw-r--r-- 1 root root 737 10-13 09:43 exile1.fyre.ibm.com.csr
+
+```
+## Send CSRs to CA center for signing.
+
+
+
  
 # Configure services for Wired Encryption
 
