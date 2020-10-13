@@ -54,14 +54,17 @@ Copy files from *templates* directory and modify.
 * source.rc : contains some common names and location. Variables in source.rc can be overwritten in custom.rc
 * custom.rc : modify the value of the following variables: SERVER_KEYPASS_PASSWORD, SERVER_STOREPASS_PASSWORD, SERVER_TRUSTSTORE_PASSWORD,CLIENT_ALLKEYS_PASSWORD and ORGDATA
 
-# Self-signed certificate 
-## Steps
+# Certificates
+
+## Self-signed certificate 
+
+### Steps
  * Create self-signed certificates
  * Distribute and install certificates in SSL KeyStore
  * Create and distribute a client truststore containing public certificates for all hosts
  * Configure services for encryption
 
-## Create and distribute server certrificate
+### Create and distribute server certrificate
 
 > ./run.sh 0 <br>
 <br>
@@ -77,30 +80,16 @@ After that, on all hosts, the following directory structure should be created.<b
  Verify<br>
  > keytool -list -v  -keystore /etc/security/serverKeys/keystore.jks<br>
  <br>
- Make sure that organization name reflects the customized name found in custom.rc and CN is equals to the full hostname.
+ Make sure that organization name reflects the customized name found in custom.rc and CN is equal to the full hostname.
  
-## Create and distribute client trustore
-
->./run.sh 1<br>
-
-The tool creates a client trustore containing the public certificates from all hosts. The trustore is then shipped to all hosts and saved in */etc/security/clientKeys/allkeys.jks* file.<br>
-Verify the content of the trustore<br>
-> keytool -list -v  -keystore /etc/security/clientKeys/allkeys.jks
-
-The number of entries should be equal to the number of hosts found in *hosts.txt* file
-## Finalize
-
-> ./run.sh 2 <br>
-
- In this step, the tool applies proper ownerships and permissions for keystores and truststores. All files in /etc/security/serverKeys should be visible only for users belonging to *hadoop* group and closed for all other users. File */etc/security/clientKeys/allkeys.jks* should be visible by all.
- 
-# CA-signed certificates
+ # CA-signed certificates
  
 ## Steps
  * Create self-signed certificates
  * Creates and collects all CSR (Certficate Signing Requests)
  * Manual step: send CSRs to Certtificate Authority to have them signed
- * Distribute and install certificates in SSL KeyStore
+ * Next steps are automated assuming that signed certificates follow prescribed structure
+ * Distribute and install CA-signed certificates in SSL keystores
  * Create and distribute a client truststore containing public certificates for all hosts
  * Configure services for encryption
 
@@ -117,12 +106,60 @@ razem 16
 -rw-r--r-- 1 root root 743 10-13 09:43 bushily2.fyre.ibm.com.csr
 -rw-r--r-- 1 root root 743 10-13 09:43 bushily3.fyre.ibm.com.csr
 -rw-r--r-- 1 root root 737 10-13 09:43 exile1.fyre.ibm.com.csr
-
 ```
-## Send CSRs to CA center for signing.
+## Send CSRs to CA Center for signing.
 
+Pick up all CSR files from *csrs* directory and send them for signing.
 
+## Distribute CA-signed certificate across the cluster and prepare a client truststore.
 
+This step can be done by the tool assuming that CA-signed certificates match the below format. Otherwise, preparing a signed keystores and distribute them should be conducted manually.<br>
+
+All CA-signed certificates should be collected in *certs* directory. Certificate for every node including the certifcate chain should be stored in *PEM* format. The certificate file name is expected to follow the format: *\<host name\>.cert.node*.
+
+Example, the list of all hosts in the cluster.
+```
+exile1.fyre.ibm.com
+bushily1.fyre.ibm.com
+bushily2.fyre.ibm.com
+bushily3.fyre.ibm.com
+```
+The corresponding *certs* directory.
+```
+ll certs/
+
+bushily1.fyre.ibm.com.cert.pem
+bushily2.fyre.ibm.com.cert.pem
+bushily3.fyre.ibm.com.cert.pem
+exile1.fyre.ibm.com.cert.pem
+```
+
+>./run.sh 4<br>
+
+Signed certificates are imported into appropriate keystores and server truststore is created containig the CA-signed certifcate only.
+```
+ls /etc/security/serverKeys/ -ltr
+exile1.fyre.ibm.com.csr
+exile1.fyre.ibm.com.cert.pem
+keystore.jks
+exile1.fyre.ibm.com.cert
+truststore.jks
+```
+ 
+## Create and distribute client trustore
+
+>./run.sh 1<br>
+
+The tool creates a client trustore containing the public certificates from all hosts. The trustore is then shipped to all hosts and saved in */etc/security/clientKeys/allkeys.jks* file.<br>
+Verify the content of the trustore<br>
+> keytool -list -v  -keystore /etc/security/clientKeys/allkeys.jks
+
+The number of entries should be equal to the number of hosts found in *hosts.txt* file
+## Finalize
+
+> ./run.sh 2 <br>
+
+ In this step, the tool applies proper ownerships and permissions for keystores and truststores. All files in /etc/security/serverKeys should be visible only for users belonging to *hadoop* group and closed for all other users. File */etc/security/clientKeys/allkeys.jks* should be visible by all.
  
 # Configure services for Wired Encryption
 
