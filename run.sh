@@ -10,7 +10,7 @@ printhelp() {
   echo " 1 - generate allkeys"
   echo " 2 - finalize"
 
-  echo " 3 - generate CSR"
+  echo " 3 - generate self-signed keys and CSR"
   echo " 4 - distribute certificates"
 }
 
@@ -44,6 +44,7 @@ collectallkeys() {
   mkdir $KEYS
   log "Collects certificate from all hosts"
   while read -r host; do
+    [ -z "$host" ] && continue
     scp $host:$SERVER_KEY_LOCATION/$host.cert $KEYS
     [ $? -ne 0 ] && logfail "Cannot copy back certficate from remote location $host"
   done <hosts.txt
@@ -54,6 +55,7 @@ collectallcsr() {
   mkdir -p $CSRDIR
   log "Collect all CSR requests into $CRSDIR"
   while read -r host; do
+    [ -z "$host" ] && continue
     scp $host:$SERVER_KEY_LOCATION/$host.csr $CSRDIR
     [ $? -ne 0 ] && logfail "Cannot copy back CSR from host $host"
   done <hosts.txt
@@ -61,6 +63,7 @@ collectallcsr() {
 
 distributecerts() {
   while read -r host; do
+    [ -z "$host" ] && continue
     CNAME=$host$CACERT_APP
     scp $CERTDIR/$CNAME $host:$SERVER_KEY_LOCATION/$CNAME
     [ $? -ne 0 ] && logfail "Cannot copy certificate to $host $SERVER_KEY_LOCATION/$CNAME"
