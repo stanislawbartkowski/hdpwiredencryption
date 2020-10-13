@@ -230,7 +230,7 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 | mapreduce.ssl.enabled | Add | true
 | mapreduce.shuffle.ssl.enabled | Add | true
  
-### TEZ, customer tez-site.xml 
+### TEZ, custom tez-site.xml 
 | Parameter | Add/modify | Value
 | ---- | ---- | ----
 | tez.runtime.shuffle.ssl.enable | Add | true
