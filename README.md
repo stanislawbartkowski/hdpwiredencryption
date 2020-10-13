@@ -206,7 +206,7 @@ The next step is to enable SSL for basic Hadoop services: WebHDFS, MapReduce2, T
 | ---- | ---- | ----
 | dfs.http.policy | Modify | HTTPS_ONLY
 | dfs.datanode.https.address | Accept default | 0.0.0.0:50475
-| dfs.namenode.https-address | Accept default or Add | \<hostname>\:50470
+| dfs.namenode.https-address | Accept default or Add | \<hostname>\:50470 or 0.0.0.0:50470 (listening on all networks)
 | dfs.namenode.secondary.https-address | Add only if HA not activated | \<secondary namenode hostname>\:50091
 
 ### Yarn, yarn-site.xml
