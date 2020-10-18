@@ -1,6 +1,9 @@
 # HDP Wired Encryption
 https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.1.0/configuring-wire-encryption/content/wire_encryption.html
 
+More detailed instructions for other components : https://github.com/stanislawbartkowski/hdpwiredencryption/wiki
+
+
 Wired Encryption masks all data which moves into the cluster, inside and out of the HDP cluster. In addition to authorization and authentication, it is another layer of security. Traffic is encrypted not only while dealing with the external world but also internally. Unfortunately, it comes with a price, usually, there is a performance penalty around 10-15% because all data in traffic is to be encrypted and decrypted.<br>
 
 Wired Encryption is adding not only the next layer of security but also another layer of complexity. Unlike Kerberos, it is not automated and manual changes are necessary. It could be a painstaking process for the first time. The HDP documentation provides all necessary information but it is very general and the HDP administrator can be confused trying to extract  practical steps to implement encryption.<br>
