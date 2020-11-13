@@ -16,7 +16,7 @@ The HDP cluster should be installed and healthy. Java and *keytool* is required.
 The Wired Encryption does not interact with Kerberos, it does not matter if the cluster is Kerberized or not.<br>
 Encryption required certificates which can be signed by Certificate Authority or self-signed. CA-signed certficates are recommended, self-signed certificates make data be encrypted but do not guarantee a full confidentiality.<br>
 The encryption method desribed in this article is enabled for the following services: WebHDFS, MapReduce/TEZ and Yarn.<br>
-There should passwordless root ssh connection between the host where the tool is installed and all other hosts in the cluster.
+Passwordless root ssh connection is expected to be enabled between the host where the tool is installed and all other hosts in the cluster.
 
 # Security concern
 The tool ships the scripts to the cluster nodes and executes them. The scripts when the task is completed. Scripts *source.rc* and *custom.rc* contains the key and truststore passwords in plain text and it makes the potential security risk. The scripts are transported to *root/re* directory on all hosts.
